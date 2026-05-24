@@ -4,7 +4,9 @@ import time
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-import soundfile as sf
+import numpy as np
+import struct
+import inspect
 from kokoro_onnx import Kokoro
 
 app = FastAPI(title="Kokoro TTS API")
@@ -22,8 +24,23 @@ except Exception as e:
 
 class TTSRequest(BaseModel):
     text: str
-    voice: str = "pf_dora" # default portuguese female voice
+    voice: str = "pf_dora"
     speed: float = 1.0
+
+def generate_wav_header(sample_rate=24000):
+    header = b'RIFF'
+    header += struct.pack('<I', 0xFFFFFFFF)
+    header += b'WAVEfmt '
+    header += struct.pack('<I', 16)
+    header += struct.pack('<H', 1)
+    header += struct.pack('<H', 1)
+    header += struct.pack('<I', sample_rate)
+    header += struct.pack('<I', sample_rate * 2)
+    header += struct.pack('<H', 2)
+    header += struct.pack('<H', 16)
+    header += b'data'
+    header += struct.pack('<I', 0xFFFFFFFF)
+    return header
 
 @app.get("/health")
 async def health_check():
@@ -34,46 +51,19 @@ async def generate_tts(req: TTSRequest):
     if kokoro is None:
         raise HTTPException(status_code=500, detail="Model not loaded")
     
-    start_time = time.time()
-    try:
-        # Use create_stream to process one sentence at a time (reduces peak memory for 512MB limits)
-        stream = kokoro.create_stream(
-            req.text,
-            voice=req.voice,
-            speed=req.speed,
-            lang="pt-br"
-        )
-        
-        all_samples = []
-        sample_rate = 24000
-        
-        import inspect
-        if inspect.isasyncgen(stream):
-            async for samples, sr in stream:
-                all_samples.append(samples)
-                sample_rate = sr
-        else:
-            for samples, sr in stream:
-                all_samples.append(samples)
-                sample_rate = sr
+    async def audio_streamer():
+        yield generate_wav_header(24000)
+        try:
+            stream = kokoro.create_stream(req.text, voice=req.voice, speed=req.speed, lang="pt-br")
+            if inspect.isasyncgen(stream):
+                async for samples, sr in stream:
+                    pcm = (samples * 32767).astype(np.int16).tobytes()
+                    yield pcm
+            else:
+                for samples, sr in stream:
+                    pcm = (samples * 32767).astype(np.int16).tobytes()
+                    yield pcm
+        except Exception as e:
+            print(f"Streaming error: {e}", flush=True)
             
-        if not all_samples:
-            raise ValueError("No audio generated (empty text or phonemization failed)")
-            
-        import numpy as np
-        final_samples = np.concatenate(all_samples)
-        
-        buffer = io.BytesIO()
-        sf.write(buffer, final_samples, sample_rate, format='WAV')
-        buffer.seek(0)
-        
-        duration = time.time() - start_time
-        return StreamingResponse(
-            buffer, 
-            media_type="audio/wav",
-            headers={"X-Generation-Time": f"{duration:.3f}"}
-        )
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+    return StreamingResponse(audio_streamer(), media_type="audio/wav")
