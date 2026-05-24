@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+
+# Build output
+apps/api/dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Runtime data (large, ephemeral)
+cache/
+logs/
+temp/
+models/
+services/tts-engine/temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Docker
+.docker/
+
+# TypeScript
+*.tsbuildinfo

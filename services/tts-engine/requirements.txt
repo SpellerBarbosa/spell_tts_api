@@ -1,0 +1,8 @@
+# Piper TTS — ONNX, CPU-only, multilingual (pt-BR, en, etc.)
+piper-tts>=1.2.0
+
+# Audio I/O
+soundfile>=0.12.1
+
+# ONNX Runtime CPU (piper-tts dependency)
+onnxruntime>=1.17.0,<2.0.0

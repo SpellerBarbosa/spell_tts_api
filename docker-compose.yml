@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    image: spell-tts-api:local
+    container_name: spell-tts-api
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      PYTHON_PATH: python3
+      MODELS_DIR: /app/models
+      CACHE_DIR: /app/cache
+      LOGS_DIR: /app/logs
+      TEMP_DIR: /app/temp
+      MAX_TEXT_LENGTH: "2000"
+      RATE_LIMIT_MAX: "100"
+      RATE_LIMIT_WINDOW_MS: "60000"
+      DEFAULT_VOICE: af_bella
+      DEFAULT_SPEED: "1.0"
+      CACHE_MAX_AGE_HOURS: "12"
+      MAX_CACHE_SIZE_MB: "300"
+      CLEANUP_INTERVAL_MS: "3600000"
+      LOG_LEVEL: debug
+      CORS_ORIGINS: "*"
+    volumes:
+      # Persist cache and logs between container restarts (local dev only)
+      - tts-cache:/app/cache
+      - tts-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+
+volumes:
+  tts-cache:
+  tts-logs:
