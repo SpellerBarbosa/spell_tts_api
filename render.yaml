@@ -10,4 +10,8 @@ services:
     envVars:
       - key: MODELS_DIR
         value: /app/models
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
 
