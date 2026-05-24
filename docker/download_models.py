@@ -63,12 +63,14 @@ if not os.path.exists(espeak_dest):
     tmp_tar = "/build/models/espeak.tar.gz"
     urllib.request.urlretrieve(ESPEAK_URL, tmp_tar)
     print("  Extracting...", flush=True)
+    tmp_extract = "/build/models/espeak_tmp"
+    os.makedirs(tmp_extract, exist_ok=True)
     with tarfile.open(tmp_tar, "r:gz") as tar:
-        tar.extractall(path="/build/models")
+        tar.extractall(path=tmp_extract)
     os.remove(tmp_tar)
     import shutil
-    shutil.move("/build/models/piper-phonemize/espeak-ng-data", espeak_dest)
-    shutil.rmtree("/build/models/piper-phonemize")
+    shutil.move(os.path.join(tmp_extract, "lib", "espeak-ng-data"), espeak_dest)
+    shutil.rmtree(tmp_extract)
     print(f"  OK  espeak-ng-data extracted to {espeak_dest}", flush=True)
 
 print("\nAll models ready.", flush=True)
