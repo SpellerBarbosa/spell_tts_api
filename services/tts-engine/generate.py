@@ -42,16 +42,18 @@ PIPER_MODELS_DIR = os.path.join(MODELS_DIR, "piper")
 PIPER_VOICES_ENV = os.environ.get("PIPER_VOICES", "pt_BR-edresson-low")
 PIPER_HF_BASE    = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
 
-# Point espeak-ng at piper_phonemize's bundled data before any piper import.
-# Without this, espeak_Initialize() inside the C extension may find no data
-# and silently return empty phoneme lists, producing a zero-byte WAV.
-try:
-    import piper_phonemize as _ppz
-    _espeak_data = os.path.join(os.path.dirname(_ppz.__file__), "espeak-ng-data")
+# Set ESPEAK_DATA_PATH BEFORE piper_phonemize is ever imported.
+# The C extension calls espeak_Initialize() at load time; if the env var
+# isn't set yet the compiled-in default path may not exist in the image,
+# causing espeak to silently return zero phonemes for every utterance.
+# importlib.util.find_spec locates the package without importing it.
+import importlib.util as _ilu
+_spec = _ilu.find_spec("piper_phonemize")
+if _spec and _spec.submodule_search_locations:
+    _ppz_dir = list(_spec.submodule_search_locations)[0]
+    _espeak_data = os.path.join(_ppz_dir, "espeak-ng-data")
     if os.path.isdir(_espeak_data):
         os.environ.setdefault("ESPEAK_DATA_PATH", _espeak_data)
-except Exception:
-    pass
 
 # ---------------------------------------------------------------------------
 # Logging & IPC
