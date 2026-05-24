@@ -8,47 +8,6 @@ services:
     healthCheckPath: /health
 
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PYTHON_PATH
-        value: python3
       - key: MODELS_DIR
         value: /app/models
-      - key: CACHE_DIR
-        value: /app/cache
-      - key: LOGS_DIR
-        value: /app/logs
-      - key: TEMP_DIR
-        value: /app/temp
 
-      # Piper voice carregada — deve coincidir com o que foi baixado no build
-      # pt_BR-edresson-low (~28 MB) — padrão MVP
-      # Trocar para pt_BR-faber-medium quando validar e quiser melhor qualidade
-      - key: PIPER_VOICES
-        value: pt_BR-edresson-low
-
-      - key: DEFAULT_VOICE
-        value: pt_BR-edresson-low
-      - key: DEFAULT_SPEED
-        value: "1.0"
-      - key: MAX_TEXT_LENGTH
-        value: "1000"
-
-      - key: RATE_LIMIT_MAX
-        value: "20"
-      - key: RATE_LIMIT_WINDOW_MS
-        value: "60000"
-
-      - key: CACHE_MAX_AGE_HOURS
-        value: "6"
-      - key: MAX_CACHE_SIZE_MB
-        value: "150"
-      - key: CLEANUP_INTERVAL_MS
-        value: "1800000"
-
-      - key: PYTHON_WORKER_TIMEOUT_MS
-        value: "60000"
-      - key: LOG_LEVEL
-        value: info
-      - key: CORS_ORIGINS
-        value: "*"
