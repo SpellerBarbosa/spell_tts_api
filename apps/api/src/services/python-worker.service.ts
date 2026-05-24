@@ -47,6 +47,7 @@ export class PythonWorkerService extends EventEmitter {
         MODELS_DIR: config.modelsPath,
         PYTHONUNBUFFERED: '1',
         PYTHONDONTWRITEBYTECODE: '1',
+        PYTHONIOENCODING: 'utf-8',
       };
 
       this.proc = spawn(config.pythonPath, [config.ttsScriptPath], {

@@ -28,10 +28,17 @@ import json
 import os
 import shutil
 import sys
+import io
 import tempfile
 import time
 import wave
 from typing import Any, Dict, List, Optional
+
+# Force UTF-8 encoding on stdin/stdout to prevent corrupted accents
+if hasattr(sys.stdin, 'buffer'):
+    sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+if hasattr(sys.stdout, 'buffer'):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # ---------------------------------------------------------------------------
 # Paths
