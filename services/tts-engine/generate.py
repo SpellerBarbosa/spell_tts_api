@@ -160,15 +160,15 @@ def generate(piper_voice: Any, text: str, speed: float, output_path: str) -> Dic
 
         sample_rate = piper_voice.config.sample_rate
 
-        # Write WAV atomically — pre-set params before synthesize() writes frames
+        # length_scale is a config attribute, not a synthesize() param
+        piper_voice.config.length_scale = length_scale
+
+        # Write WAV atomically — synthesize() sets wav params itself
         fd, tmp_path = tempfile.mkstemp(suffix=".wav", dir=out_dir)
         os.close(fd)
         try:
             with wave.open(tmp_path, "wb") as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)  # 16-bit PCM
-                wf.setframerate(sample_rate)
-                piper_voice.synthesize(text, wf, length_scale=length_scale)
+                piper_voice.synthesize(text, wf)
             shutil.move(tmp_path, output_path)
         except Exception:
             if os.path.exists(tmp_path):
