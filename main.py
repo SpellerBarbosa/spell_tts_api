@@ -36,15 +36,28 @@ async def generate_tts(req: TTSRequest):
     
     start_time = time.time()
     try:
-        samples, sample_rate = kokoro.create(
+        # Use create_stream to process one sentence at a time (reduces peak memory for 512MB limits)
+        stream = kokoro.create_stream(
             req.text,
             voice=req.voice,
             speed=req.speed,
             lang="pt-br"
         )
         
+        all_samples = []
+        sample_rate = 24000
+        for samples, sr in stream:
+            all_samples.append(samples)
+            sample_rate = sr
+            
+        if not all_samples:
+            raise ValueError("No audio generated (empty text or phonemization failed)")
+            
+        import numpy as np
+        final_samples = np.concatenate(all_samples)
+        
         buffer = io.BytesIO()
-        sf.write(buffer, samples, sample_rate, format='WAV')
+        sf.write(buffer, final_samples, sample_rate, format='WAV')
         buffer.seek(0)
         
         duration = time.time() - start_time
