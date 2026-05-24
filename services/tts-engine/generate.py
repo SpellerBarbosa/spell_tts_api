@@ -47,9 +47,28 @@ PIPER_HF_BASE    = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
 # isn't set yet the compiled-in default path may not exist in the image,
 # causing espeak to silently return zero phonemes for every utterance.
 import importlib.util as _ilu
+import shutil
+
+_app_espeak = os.environ.get("MODELS_DIR", "/app/models") + "/espeak-ng-data"
+_sys_espeak = "/usr/lib/x86_64-linux-gnu/espeak-ng-data"
+
+# Merge system voices into app espeak-ng-data because Rhasspy's tarball strips them
+if os.path.exists(_sys_espeak + "/voices") and os.path.exists(_app_espeak + "/voices"):
+    for item in os.listdir(_sys_espeak + "/voices"):
+        s = os.path.join(_sys_espeak + "/voices", item)
+        d = os.path.join(_app_espeak + "/voices", item)
+        if not os.path.exists(d):
+            try:
+                if os.path.isdir(s):
+                    shutil.copytree(s, d)
+                else:
+                    shutil.copy2(s, d)
+            except Exception:
+                pass
+
 _espeak_paths = [
-    os.environ.get("MODELS_DIR", "/app/models") + "/espeak-ng-data",
-    "/usr/lib/x86_64-linux-gnu/espeak-ng-data",
+    _app_espeak,
+    _sys_espeak,
     "/usr/lib/aarch64-linux-gnu/espeak-ng-data",
     "/usr/share/espeak-ng-data",
     "/usr/local/share/espeak-ng-data"

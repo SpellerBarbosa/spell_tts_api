@@ -1,1 +1,1 @@
-{"success":false,"error":"Synthesis Error","message":"espeak-ng produced no phonemes for voice 'pt-br' — ESPEAK_DATA_PATH='/app/models/espeak-ng-data'","statusCode":500,"timestamp":"2026-05-24T02:36:24.244Z"}
+{"success":false,"error":"Synthesis Error","message":"espeak-ng produced no phonemes for voice 'pt-br' — ESPEAK_DATA_PATH='/app/models/espeak-ng-data'","statusCode":500,"timestamp":"2026-05-24T02:44:57.797Z"}
