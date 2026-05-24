@@ -42,6 +42,17 @@ PIPER_MODELS_DIR = os.path.join(MODELS_DIR, "piper")
 PIPER_VOICES_ENV = os.environ.get("PIPER_VOICES", "pt_BR-edresson-low")
 PIPER_HF_BASE    = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
 
+# Point espeak-ng at piper_phonemize's bundled data before any piper import.
+# Without this, espeak_Initialize() inside the C extension may find no data
+# and silently return empty phoneme lists, producing a zero-byte WAV.
+try:
+    import piper_phonemize as _ppz
+    _espeak_data = os.path.join(os.path.dirname(_ppz.__file__), "espeak-ng-data")
+    if os.path.isdir(_espeak_data):
+        os.environ.setdefault("ESPEAK_DATA_PATH", _espeak_data)
+except Exception:
+    pass
+
 # ---------------------------------------------------------------------------
 # Logging & IPC
 # ---------------------------------------------------------------------------
@@ -163,6 +174,9 @@ def generate(piper_voice: Any, text: str, speed: float, output_path: str) -> Dic
         # length_scale lives on the config, not as a synthesize() kwarg
         piper_voice.config.length_scale = length_scale
 
+        espeak_voice = getattr(piper_voice.config, "espeak_voice", "?")
+        log(f"Synthesizing: espeak_voice={espeak_voice!r} sample_rate={sample_rate} length_scale={length_scale}")
+
         # Write WAV atomically — pre-set params (installed version doesn't set them)
         fd, tmp_path = tempfile.mkstemp(suffix=".wav", dir=out_dir)
         os.close(fd)
@@ -179,7 +193,15 @@ def generate(piper_voice: Any, text: str, speed: float, output_path: str) -> Dic
             raise
 
         with wave.open(output_path, "rb") as wf:
-            audio_duration = wf.getnframes() / wf.getframerate()
+            frames = wf.getnframes()
+            audio_duration = frames / wf.getframerate()
+
+        log(f"Done: {frames} frames, {audio_duration:.3f}s")
+        if frames == 0:
+            raise RuntimeError(
+                f"espeak-ng produced no phonemes for voice {espeak_voice!r} — "
+                f"ESPEAK_DATA_PATH={os.environ.get('ESPEAK_DATA_PATH', 'unset')!r}"
+            )
 
         return {
             "success": True,
