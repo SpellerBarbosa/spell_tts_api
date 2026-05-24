@@ -1,0 +1,1 @@
+﻿{"text":"Testando o Kokoro quantizado na versão int8! A geração de áudio por streaming em chunks deve garantir que o consumo de memória permaneça extremamente baixo, evitando que a instância free do Render derrube o processo por Out of Memory. Com as vírgulas, pontos de exclamação e acentuação, o Misaki fará a fonemização perfeita para a voz da Dora.","voice":"pf_dora"}

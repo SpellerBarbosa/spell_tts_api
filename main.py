@@ -46,9 +46,16 @@ async def generate_tts(req: TTSRequest):
         
         all_samples = []
         sample_rate = 24000
-        for samples, sr in stream:
-            all_samples.append(samples)
-            sample_rate = sr
+        
+        import inspect
+        if inspect.isasyncgen(stream):
+            async for samples, sr in stream:
+                all_samples.append(samples)
+                sample_rate = sr
+        else:
+            for samples, sr in stream:
+                all_samples.append(samples)
+                sample_rate = sr
             
         if not all_samples:
             raise ValueError("No audio generated (empty text or phonemization failed)")
