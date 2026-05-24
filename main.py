@@ -9,7 +9,7 @@ from kokoro_onnx import Kokoro
 
 app = FastAPI(title="Kokoro TTS API")
 
-KOKORO_MODEL = os.getenv("KOKORO_MODEL", "models/kokoro-v1.0-int8.onnx")
+KOKORO_MODEL = os.getenv("KOKORO_MODEL", "models/kokoro-v1.0.int8.onnx")
 KOKORO_VOICES = os.getenv("KOKORO_VOICES", "models/voices-v1.0.bin")
 
 print(f"Loading Kokoro model from {KOKORO_MODEL}...", flush=True)
