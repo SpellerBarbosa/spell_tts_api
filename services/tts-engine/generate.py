@@ -158,20 +158,30 @@ def generate(piper_voice: Any, text: str, speed: float, output_path: str) -> Dic
         out_dir = os.path.dirname(os.path.abspath(output_path))
         os.makedirs(out_dir, exist_ok=True)
 
+        # Collect raw PCM audio from Piper
+        audio_chunks: List[bytes] = []
+        for chunk in piper_voice.synthesize_stream_raw(text, length_scale=length_scale):
+            audio_chunks.append(chunk)
+        audio_bytes = b"".join(audio_chunks)
+
+        sample_rate = piper_voice.config.sample_rate
+
+        # Write WAV atomically with explicit parameters
         fd, tmp_path = tempfile.mkstemp(suffix=".wav", dir=out_dir)
         os.close(fd)
         try:
             with wave.open(tmp_path, "wb") as wf:
-                piper_voice.synthesize(text, wf, length_scale=length_scale)
+                wf.setnchannels(1)
+                wf.setsampwidth(2)  # 16-bit PCM
+                wf.setframerate(sample_rate)
+                wf.writeframes(audio_bytes)
             shutil.move(tmp_path, output_path)
         except Exception:
             if os.path.exists(tmp_path):
                 os.unlink(tmp_path)
             raise
 
-        with wave.open(output_path, "rb") as wf:
-            audio_duration = wf.getnframes() / wf.getframerate()
-            sample_rate    = wf.getframerate()
+        audio_duration = len(audio_bytes) / (sample_rate * 2)  # 16-bit = 2 bytes/sample
 
         return {
             "success": True,
