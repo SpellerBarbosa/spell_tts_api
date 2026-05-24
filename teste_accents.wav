@@ -1,0 +1,1 @@
+{"success":false,"error":"Synthesis Error","message":"espeak-ng produced no phonemes for voice 'pt-br' — ESPEAK_DATA_PATH='/usr/lib/x86_64-linux-gnu/espeak-ng-data'","statusCode":500,"timestamp":"2026-05-24T02:30:25.918Z"}

@@ -48,6 +48,7 @@ PIPER_HF_BASE    = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
 # causing espeak to silently return zero phonemes for every utterance.
 import importlib.util as _ilu
 _espeak_paths = [
+    os.environ.get("MODELS_DIR", "/app/models") + "/espeak-ng-data",
     "/usr/lib/x86_64-linux-gnu/espeak-ng-data",
     "/usr/lib/aarch64-linux-gnu/espeak-ng-data",
     "/usr/share/espeak-ng-data",

@@ -54,4 +54,22 @@ else:
 
     print(f"\n[Piper] done in {time.time()-t0:.1f}s", flush=True)
 
+# Also download espeak-ng-data to ensure we have the correct dicts for Piper
+ESPEAK_URL = "https://github.com/rhasspy/piper-phonemize/releases/download/v1.1.0/piper-phonemize_linux_x86_64.tar.gz"
+espeak_dest = "/build/models/espeak-ng-data"
+if not os.path.exists(espeak_dest):
+    print(f"\n[espeak-ng] downloading data from {ESPEAK_URL}...", flush=True)
+    import tarfile
+    tmp_tar = "/build/models/espeak.tar.gz"
+    urllib.request.urlretrieve(ESPEAK_URL, tmp_tar)
+    print("  Extracting...", flush=True)
+    with tarfile.open(tmp_tar, "r:gz") as tar:
+        tar.extractall(path="/build/models")
+    os.remove(tmp_tar)
+    import shutil
+    shutil.move("/build/models/piper-phonemize/espeak-ng-data", espeak_dest)
+    shutil.rmtree("/build/models/piper-phonemize")
+    print(f"  OK  espeak-ng-data extracted to {espeak_dest}", flush=True)
+
 print("\nAll models ready.", flush=True)
+
