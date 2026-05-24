@@ -55,20 +55,20 @@ else:
     print(f"\n[Piper] done in {time.time()-t0:.1f}s", flush=True)
 
 # Also download espeak-ng-data to ensure we have the correct dicts for Piper
-ESPEAK_URL = "https://github.com/rhasspy/piper-phonemize/releases/download/v1.1.0/piper_phonemize-1.1.0-cp311-cp311-manylinux_2_28_x86_64.whl"
+ESPEAK_URL = "https://github.com/rhasspy/piper-phonemize/releases/download/v1.1.0/libpiper_phonemize-amd64.tar.gz"
 espeak_dest = "/build/models/espeak-ng-data"
 if not os.path.exists(espeak_dest):
     print(f"\n[espeak-ng] downloading data from {ESPEAK_URL}...", flush=True)
-    import zipfile
-    tmp_zip = "/build/models/espeak.whl"
-    urllib.request.urlretrieve(ESPEAK_URL, tmp_zip)
+    import tarfile
+    tmp_tar = "/build/models/espeak.tar.gz"
+    urllib.request.urlretrieve(ESPEAK_URL, tmp_tar)
     print("  Extracting...", flush=True)
-    with zipfile.ZipFile(tmp_zip, 'r') as zip_ref:
-        zip_ref.extractall("/build/models")
-    os.remove(tmp_zip)
+    with tarfile.open(tmp_tar, "r:gz") as tar:
+        tar.extractall(path="/build/models")
+    os.remove(tmp_tar)
     import shutil
-    shutil.move("/build/models/piper_phonemize/espeak-ng-data", espeak_dest)
-    shutil.rmtree("/build/models/piper_phonemize")
+    shutil.move("/build/models/piper-phonemize/espeak-ng-data", espeak_dest)
+    shutil.rmtree("/build/models/piper-phonemize")
     print(f"  OK  espeak-ng-data extracted to {espeak_dest}", flush=True)
 
 print("\nAll models ready.", flush=True)
