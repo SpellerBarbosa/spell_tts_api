@@ -1,0 +1,1 @@
+{"success":false,"error":"Synthesis Error","message":"PiperVoice.synthesize() got an unexpected keyword argument 'length_scale'","statusCode":500,"timestamp":"2026-05-24T01:53:03.210Z"}

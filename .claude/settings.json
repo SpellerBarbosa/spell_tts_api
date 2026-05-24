@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'fix: use npm install instead of npm ci \\(no lockfile in repo\\) *)",
+      "Bash(git commit -m 'fix: resolve TypeScript compile errors *)",
+      "Bash(gh run *)",
+      "Bash(curl -s https://spell-tts-api.onrender.com/health)",
+      "Bash(curl -s https://spell-tts-api.onrender.com/voices)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\":\"Olá, bem-vindo ao sistema de voz.\",\"voice\":\"pt_BR-edresson-low\",\"speed\":1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\test_output.wav' -w 'HTTP %{http_code} | Tamanho: %{size_download} bytes | Tempo: %{time_total}s')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\":\"Olá, bem-vindo.\",\"voice\":\"pt_BR-edresson-low\",\"speed\":1.0}')",
+      "Bash(git commit -m 'fix: use synthesize_stream_raw + explicit WAV params *)",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\":\"Olá, bem-vindo ao sistema de voz.\",\"voice\":\"pt_BR-edresson-low\",\"speed\":1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\teste.wav' -w 'HTTP %{http_code} | %{size_download} bytes | %{time_total}s')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\":\"Olá.\",\"voice\":\"pt_BR-edresson-low\",\"speed\":1.0}')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\teste_render.wav' -w '%{http_code} | %{size_download} bytes | %{time_total}s')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}')",
+      "Bash(Start-Sleep -Seconds 180)",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz em português brasileiro.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\teste_ok.wav' -w 'HTTP %{http_code} | %{size_download} bytes | %{time_total}s')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz em português brasileiro.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\teste_final.wav' -w 'HTTP %{http_code} | %{size_download} bytes | %{time_total}s')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz em português brasileiro.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}')",
+      "Bash(curl -s -X POST https://spell-tts-api.onrender.com/tts -H 'Content-Type: application/json' -d '{\"text\": \"Olá, isso é um teste de síntese de voz em português brasileiro.\", \"voice\": \"pt_BR-edresson-low\", \"speed\": 1.0}' -o 'c:\\\\Users\\\\bemar\\\\Documents\\\\Projetos\\\\spell_tts_api\\\\teste_final.wav' -w '\\\\nHTTP %{http_code} | %{size_download} bytes | tempo: %{time_total}s')"
+    ]
+  }
+}

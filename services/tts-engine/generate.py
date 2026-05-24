@@ -46,14 +46,26 @@ PIPER_HF_BASE    = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0"
 # The C extension calls espeak_Initialize() at load time; if the env var
 # isn't set yet the compiled-in default path may not exist in the image,
 # causing espeak to silently return zero phonemes for every utterance.
-# importlib.util.find_spec locates the package without importing it.
 import importlib.util as _ilu
+_espeak_paths = [
+    "/usr/lib/x86_64-linux-gnu/espeak-ng-data",
+    "/usr/lib/aarch64-linux-gnu/espeak-ng-data",
+    "/usr/share/espeak-ng-data",
+    "/usr/local/share/espeak-ng-data"
+]
 _spec = _ilu.find_spec("piper_phonemize")
-if _spec and _spec.submodule_search_locations:
-    _ppz_dir = list(_spec.submodule_search_locations)[0]
-    _espeak_data = os.path.join(_ppz_dir, "espeak-ng-data")
-    if os.path.isdir(_espeak_data):
-        os.environ.setdefault("ESPEAK_DATA_PATH", _espeak_data)
+if _spec:
+    if _spec.submodule_search_locations:
+        _espeak_paths.insert(0, os.path.join(list(_spec.submodule_search_locations)[0], "espeak-ng-data"))
+    elif _spec.origin:
+        _dir = os.path.dirname(_spec.origin)
+        _espeak_paths.insert(0, os.path.join(_dir, "piper_phonemize", "espeak-ng-data"))
+        _espeak_paths.insert(0, os.path.join(_dir, "espeak-ng-data"))
+
+for _p in _espeak_paths:
+    if os.path.isdir(_p):
+        os.environ.setdefault("ESPEAK_DATA_PATH", _p)
+        break
 
 # ---------------------------------------------------------------------------
 # Logging & IPC

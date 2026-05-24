@@ -45,6 +45,19 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
+  // Handle SyntaxError from express.json() when body is malformed
+  if (err instanceof SyntaxError && 'status' in err && err.status === 400 && 'body' in err) {
+    const body: ApiErrorResponse = {
+      success: false,
+      error: 'Bad Request',
+      message: 'Invalid JSON payload: ' + err.message,
+      statusCode: 400,
+      timestamp: new Date().toISOString(),
+    };
+    res.status(400).json(body);
+    return;
+  }
+
   logger.error('Unhandled error', {
     error: err instanceof Error ? err.message : String(err),
     stack: err instanceof Error ? err.stack : undefined,
