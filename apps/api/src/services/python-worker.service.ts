@@ -121,9 +121,9 @@ export class PythonWorkerService extends EventEmitter {
           this.restartCount++;
           logger.info(`Restarting Python worker in ${delay}ms`, { attempt: this.restartCount });
           setTimeout(() => {
-            this.startPromise = this.boot().catch((e) =>
-              logger.error('Worker restart failed', { error: (e as Error).message })
-            );
+            this.startPromise = this.boot().catch((e) => {
+              logger.error('Worker restart failed', { error: (e as Error).message });
+            });
           }, delay);
         }
       });

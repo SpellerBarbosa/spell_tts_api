@@ -23,7 +23,7 @@ export async function healthCheck(_req: Request, res: Response): Promise<void> {
       : 'error';
 
   const apiStatus: HealthStatus['status'] =
-    pyStatus === 'ready' ? 'ok' : pyStatus === 'initializing' ? 'warming' : 'degraded';
+    pyStatus === 'ready' ? 'ok' : pyStatus === 'initializing' ? 'warming' : 'error';
 
   const body: HealthStatus = {
     status: apiStatus,
