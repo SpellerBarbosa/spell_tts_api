@@ -33,12 +33,12 @@ FROM node:20-slim AS node-builder
 
 WORKDIR /build
 
-COPY apps/api/package*.json ./
-RUN npm ci --ignore-scripts
+COPY apps/api/package.json ./
+RUN npm install --ignore-scripts
 
 COPY apps/api/tsconfig.json ./
 COPY apps/api/src ./src
-RUN npm run build && npm prune --production
+RUN npm run build && npm prune --omit=dev
 
 # =============================================================================
 # Stage 3 — Runtime image
